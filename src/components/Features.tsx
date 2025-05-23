@@ -1,11 +1,15 @@
-
-import { Shield, Zap, Target, Code } from "lucide-react";
+import { Shield, Zap, Target, Code, List } from "lucide-react";
 
 const features = [
   {
     icon: Shield,
     title: "SMART DETECTION",
     description: "Intelligently identifies and removes markdown syntax while preserving text structure."
+  },
+  {
+    icon: List,
+    title: "BULLET PRESERVATION",
+    description: "Keeps bullet points and numbered lists intact when converting from markdown to plain text."
   },
   {
     icon: Zap,
@@ -16,11 +20,6 @@ const features = [
     icon: Target,
     title: "PRECISION HANDLING",
     description: "Special logic for problematic patterns like ** bold syntax that cause issues in other tools."
-  },
-  {
-    icon: Code,
-    title: "FORMAT PRESERVATION",
-    description: "Maintains indentation, bullet points, line breaks, and overall document structure."
   }
 ];
 

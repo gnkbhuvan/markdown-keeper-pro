@@ -1,5 +1,5 @@
 
-import { FileText, Zap } from "lucide-react";
+import { FileText, Zap, List } from "lucide-react";
 
 export const Hero = () => {
   return (
@@ -40,6 +40,7 @@ export const Hero = () => {
                 <div className="text-gray-600">✓ Preserves indentation</div>
                 <div className="text-gray-600">✓ Maintains bullet points</div>
                 <div className="text-gray-600">✓ Keeps line breaks</div>
+                <div className="text-gray-600">✓ Works with copied ChatGPT content</div>
               </div>
             </div>
           </div>

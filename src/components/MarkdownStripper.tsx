@@ -16,6 +16,11 @@ export const MarkdownStripper = () => {
 
     let result = text;
 
+    // First preserve bullet points by replacing them with special markers
+    // Handle various types of bullet points (*, -, +) and numbered lists
+    result = result.replace(/^(\s*)[*\-+](\s+)/gm, '$1•$2'); // Convert markdown bullets to bullet character
+    result = result.replace(/^(\s*)\d+\.(\s+)/gm, '$1•$2'); // Convert numbered lists to bullet character
+
     // Handle ** bold syntax with careful regex to avoid issues
     // This handles **text** while preserving standalone asterisks
     result = result.replace(/\*\*([^*]+)\*\*/g, '$1');
