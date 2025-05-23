@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,16 +32,14 @@ export const MarkdownStripper = () => {
 
     // Handle bold syntax based on user preference
     if (!keepBold) {
-      // Handle ** bold syntax
+      // Remove bold formatting completely if not preserving
       result = result.replace(/\*\*([^*]+)\*\*/g, '$1');
-      // Handle __ bold syntax
       result = result.replace(/__([^_]+)__/g, '$1');
     } else {
-      // If we're preserving bold, we still need to modify the syntax to be compatible with Gmail/Google Chat
-      // Replace ** with actual bold formatting that will paste correctly
-      result = result.replace(/\*\*([^*]+)\*\*/g, '$1');
-      // Replace __ with actual bold formatting that will paste correctly
-      result = result.replace(/__([^_]+)__/g, '$1');
+      // For Gmail/Google Chat compatibility, we need special handling for bold
+      // We'll keep the text but apply special formatting that will transfer as bold
+      result = result.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
+      result = result.replace(/__([^_]+)__/g, '<b>$1</b>');
     }
     
     // Handle single * italic syntax (but not bullet points)
