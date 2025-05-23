@@ -37,6 +37,12 @@ export const MarkdownStripper = () => {
       result = result.replace(/\*\*([^*]+)\*\*/g, '$1');
       // Handle __ bold syntax
       result = result.replace(/__([^_]+)__/g, '$1');
+    } else {
+      // If we're preserving bold, we still need to modify the syntax to be compatible with Gmail/Google Chat
+      // Replace ** with actual bold formatting that will paste correctly
+      result = result.replace(/\*\*([^*]+)\*\*/g, '$1');
+      // Replace __ with actual bold formatting that will paste correctly
+      result = result.replace(/__([^_]+)__/g, '$1');
     }
     
     // Handle single * italic syntax (but not bullet points)
