@@ -1,5 +1,5 @@
 
-import { FileText, Zap, List } from "lucide-react";
+import { FileText, Zap, List, Bold } from "lucide-react";
 
 export const Hero = () => {
   return (
@@ -18,7 +18,7 @@ export const Hero = () => {
                 <span className="text-coral-500">STRIPPER</span>
               </h1>
               <p className="text-xl text-gray-600 max-w-md">
-                Remove markdown formatting while preserving text structure, indentation, and bullet points perfectly.
+                Remove markdown formatting while preserving text structure, indentation, and bullet points perfectly - especially for ChatGPT content.
               </p>
             </div>
             
@@ -36,11 +36,12 @@ export const Hero = () => {
                 <span className="font-semibold text-gray-700">Smart Processing</span>
               </div>
               <div className="space-y-3 text-sm">
-                <div className="text-gray-600">✓ Handles ** bold syntax</div>
+                <div className="text-gray-600">✓ Handles ** bold syntax (toggle on/off)</div>
                 <div className="text-gray-600">✓ Preserves indentation</div>
                 <div className="text-gray-600">✓ Maintains bullet points</div>
                 <div className="text-gray-600">✓ Keeps line breaks</div>
                 <div className="text-gray-600">✓ Works with copied ChatGPT content</div>
+                <div className="text-gray-600">✓ Perfect for Gmail & Google Chat</div>
               </div>
             </div>
           </div>

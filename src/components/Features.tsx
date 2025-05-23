@@ -1,4 +1,5 @@
-import { Shield, Zap, Target, Code, List } from "lucide-react";
+
+import { Shield, Zap, Target, Code, List, Bold } from "lucide-react";
 
 const features = [
   {
@@ -20,6 +21,11 @@ const features = [
     icon: Target,
     title: "PRECISION HANDLING",
     description: "Special logic for problematic patterns like ** bold syntax that cause issues in other tools."
+  },
+  {
+    icon: Bold,
+    title: "BOLD TOGGLE",
+    description: "Choose whether to preserve or remove bold formatting based on your needs."
   }
 ];
 
@@ -36,7 +42,7 @@ export const Features = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8">
           {features.map((feature, index) => (
             <div
               key={index}

@@ -3,33 +3,44 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Copy, Download, RefreshCw, Trash2 } from "lucide-react";
+import { Copy, Download, RefreshCw, Trash2, Bold } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
 
 export const MarkdownStripper = () => {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
+  const [preserveBold, setPreserveBold] = useState(false);
   const { toast } = useToast();
 
-  const stripMarkdown = (text: string): string => {
+  const stripMarkdown = (text: string, keepBold: boolean): string => {
     if (!text) return "";
 
     let result = text;
 
-    // First preserve bullet points by replacing them with special markers
-    // Handle various types of bullet points (*, -, +) and numbered lists
-    result = result.replace(/^(\s*)[*\-+](\s+)/gm, '$1•$2'); // Convert markdown bullets to bullet character
+    // Special handling for ChatGPT-style bullet points and indentation
+    // Preserve both markdown bullet points and Unicode bullets that might exist
+    result = result.replace(/^(\s*)[-*+•](\s+)/gm, '$1•$2'); // Convert all bullets to bullet character
     result = result.replace(/^(\s*)\d+\.(\s+)/gm, '$1•$2'); // Convert numbered lists to bullet character
+    
+    // Handle code blocks first (prevent processing inside code blocks)
+    const codeBlocks: string[] = [];
+    result = result.replace(/```[\s\S]*?```/g, (match) => {
+      const id = `__CODE_BLOCK_${codeBlocks.length}__`;
+      codeBlocks.push(match.replace(/```/g, '').trim());
+      return id;
+    });
 
-    // Handle ** bold syntax with careful regex to avoid issues
-    // This handles **text** while preserving standalone asterisks
-    result = result.replace(/\*\*([^*]+)\*\*/g, '$1');
+    // Handle bold syntax based on user preference
+    if (!keepBold) {
+      // Handle ** bold syntax
+      result = result.replace(/\*\*([^*]+)\*\*/g, '$1');
+      // Handle __ bold syntax
+      result = result.replace(/__([^_]+)__/g, '$1');
+    }
     
-    // Handle single * italic syntax
+    // Handle single * italic syntax (but not bullet points)
     result = result.replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g, '$1');
-    
-    // Handle __ bold syntax
-    result = result.replace(/__([^_]+)__/g, '$1');
     
     // Handle _ italic syntax (but not in the middle of words)
     result = result.replace(/(?<!\w)_([^_\n]+)_(?!\w)/g, '$1');
@@ -37,13 +48,8 @@ export const MarkdownStripper = () => {
     // Handle ~~strikethrough~~
     result = result.replace(/~~([^~]+)~~/g, '$1');
     
-    // Handle `inline code`
+    // Handle `inline code` - preserve exact content
     result = result.replace(/`([^`]+)`/g, '$1');
-    
-    // Handle ```code blocks``` but preserve line structure
-    result = result.replace(/```[\s\S]*?```/g, (match) => {
-      return match.replace(/```/g, '').trim();
-    });
     
     // Handle [link text](url)
     result = result.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
@@ -60,14 +66,23 @@ export const MarkdownStripper = () => {
     // Handle > blockquotes but preserve indentation
     result = result.replace(/^>\s*/gm, '');
     
-    // Clean up excessive line breaks but preserve intentional spacing
+    // Restore code blocks
+    codeBlocks.forEach((block, i) => {
+      result = result.replace(`__CODE_BLOCK_${i}__`, block);
+    });
+    
+    // Ensure proper spacing for bullet points and lines
+    result = result.replace(/^•\s*/gm, '• ');
+    
+    // Normalize line breaks but preserve intentional spacing
+    // This prevents collapsing multiple spaces in the text
     result = result.replace(/\n{3,}/g, '\n\n');
     
     return result;
   };
 
   const handleProcess = () => {
-    const processed = stripMarkdown(input);
+    const processed = stripMarkdown(input, preserveBold);
     setOutput(processed);
     toast({
       title: "Processed successfully",
@@ -106,6 +121,19 @@ export const MarkdownStripper = () => {
     });
   };
 
+  const handleToggleBold = () => {
+    setPreserveBold(!preserveBold);
+    if (output) {
+      // Re-process with new setting if there's already output
+      const processed = stripMarkdown(input, !preserveBold);
+      setOutput(processed);
+      toast({
+        title: `Bold text ${!preserveBold ? 'preserved' : 'removed'}`,
+        description: "Text has been re-processed with new settings.",
+      });
+    }
+  };
+
   return (
     <section className="px-6 py-16 lg:px-8">
       <div className="mx-auto max-w-7xl">
@@ -116,6 +144,21 @@ export const MarkdownStripper = () => {
           <p className="text-gray-600 max-w-2xl mx-auto">
             Paste your markdown text below and our intelligent processor will remove all markdown syntax while preserving your formatting structure.
           </p>
+        </div>
+
+        <div className="flex items-center justify-center mb-6">
+          <div className="flex items-center space-x-2">
+            <Switch 
+              id="preserve-bold" 
+              checked={preserveBold} 
+              onCheckedChange={handleToggleBold}
+              className="data-[state=checked]:bg-coral-500"
+            />
+            <label htmlFor="preserve-bold" className="text-sm font-medium text-gray-700 flex items-center">
+              <Bold className="h-4 w-4 mr-1" />
+              Preserve Bold Text
+            </label>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
