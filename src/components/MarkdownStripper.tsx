@@ -23,13 +23,14 @@ export const MarkdownStripper = () => {
 
     // 1. Handle backslashes used incorrectly - remove standalone backslashes
     result = result.replace(/\\\s+/g, ' ');
+    result = result.replace(/\\/g, '');
 
-    // 2. Convert numbered bullet points with bold formatting to plain text
+    // 3. Convert numbered bullet points with bold formatting to plain text
     // Pattern: "1. **Text** rest of line" -> "1. Text rest of line"
     result = result.replace(/^(\s*\d+\.\s*)\*\*([^*]+)\*\*(.*)$/gm, '$1$2$3');
     result = result.replace(/^(\s*\d+\.\s*)__([^_]+)__(.*)$/gm, '$1$2$3');
 
-    // 3. Replace em dash (—) with comma and space
+    // 4. Replace em dash (—) with comma and space
     result = result.replace(/—/g, ', ');
 
     // Special handling for ChatGPT-style bullet points and indentation
