@@ -17,6 +17,19 @@ export const MarkdownStripper = () => {
 
     let result = text;
 
+    // Preprocessing rules
+    // 1. Ignore lines with pricing patterns ($ followed by numbers and "million")
+    const pricingPattern = /^.*\$\d+.*million.*tokens.*$/gm;
+    result = result.replace(pricingPattern, '');
+
+    // 2. Convert numbered bullet points with bold formatting to plain text
+    // Pattern: "1. **Text** rest of line" -> "1. Text rest of line"
+    result = result.replace(/^(\s*\d+\.\s*)\*\*([^*]+)\*\*(.*)$/gm, '$1$2$3');
+    result = result.replace(/^(\s*\d+\.\s*)__([^_]+)__(.*)$/gm, '$1$2$3');
+
+    // 3. Replace em dash (—) with comma
+    result = result.replace(/—/g, ',');
+
     // Special handling for ChatGPT-style bullet points and indentation
     // Preserve both markdown bullet points and Unicode bullets that might exist
     result = result.replace(/^(\s*)[-*+•](\s+)/gm, '$1•$2'); // Convert all bullets to bullet character
@@ -36,10 +49,53 @@ export const MarkdownStripper = () => {
       result = result.replace(/\*\*([^*]+)\*\*/g, '$1');
       result = result.replace(/__([^_]+)__/g, '$1');
     } else {
-      // For Gmail/Google Chat compatibility, we need special handling for bold
-      // We'll keep the text but apply special formatting that will transfer as bold
-      result = result.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
-      result = result.replace(/__([^_]+)__/g, '<b>$1</b>');
+      // For better compatibility with text applications, use Unicode bold characters when possible
+      // or keep the original markdown syntax for manual formatting
+      result = result.replace(/\*\*([^*]+)\*\*/g, (match, content) => {
+        // Try to convert to Unicode bold characters for basic ASCII
+        const boldContent = content.split('').map((char: string) => {
+          const code = char.charCodeAt(0);
+          // Convert A-Z to bold
+          if (code >= 65 && code <= 90) {
+            return String.fromCharCode(code - 65 + 0x1D400 + 26);
+          }
+          // Convert a-z to bold
+          if (code >= 97 && code <= 122) {
+            return String.fromCharCode(code - 97 + 0x1D41A);
+          }
+          // Convert 0-9 to bold
+          if (code >= 48 && code <= 57) {
+            return String.fromCharCode(code - 48 + 0x1D7CE);
+          }
+          return char;
+        }).join('');
+        
+        // If Unicode conversion resulted in different characters, use it; otherwise keep original
+        return boldContent !== content ? boldContent : `**${content}**`;
+      });
+      
+      result = result.replace(/__([^_]+)__/g, (match, content) => {
+        // Try to convert to Unicode bold characters for basic ASCII
+        const boldContent = content.split('').map((char: string) => {
+          const code = char.charCodeAt(0);
+          // Convert A-Z to bold
+          if (code >= 65 && code <= 90) {
+            return String.fromCharCode(code - 65 + 0x1D400 + 26);
+          }
+          // Convert a-z to bold
+          if (code >= 97 && code <= 122) {
+            return String.fromCharCode(code - 97 + 0x1D41A);
+          }
+          // Convert 0-9 to bold
+          if (code >= 48 && code <= 57) {
+            return String.fromCharCode(code - 48 + 0x1D7CE);
+          }
+          return char;
+        }).join('');
+        
+        // If Unicode conversion resulted in different characters, use it; otherwise keep original
+        return boldContent !== content ? boldContent : `__${content}__`;
+      });
     }
     
     // Handle single * italic syntax (but not bullet points)
@@ -77,8 +133,7 @@ export const MarkdownStripper = () => {
     // Ensure proper spacing for bullet points and lines
     result = result.replace(/^•\s*/gm, '• ');
     
-    // Normalize line breaks but preserve intentional spacing
-    // This prevents collapsing multiple spaces in the text
+    // Clean up empty lines left by ignored pricing lines
     result = result.replace(/\n{3,}/g, '\n\n');
     
     return result;
@@ -126,8 +181,8 @@ export const MarkdownStripper = () => {
 
   const handleToggleBold = () => {
     setPreserveBold(!preserveBold);
-    if (output) {
-      // Re-process with new setting if there's already output
+    if (input.trim()) {
+      // Re-process with new setting if there's input
       const processed = stripMarkdown(input, !preserveBold);
       setOutput(processed);
       toast({
