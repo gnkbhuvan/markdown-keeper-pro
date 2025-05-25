@@ -33,7 +33,7 @@ export const MarkdownStripper = () => {
     // Special handling for ChatGPT-style bullet points and indentation
     // Preserve both markdown bullet points and Unicode bullets that might exist
     result = result.replace(/^(\s*)[-*+•](\s+)/gm, '$1•$2'); // Convert all bullets to bullet character
-    result = result.replace(/^(\s*)\d+\.(\s+)/gm, '$1•$2'); // Convert numbered lists to bullet character
+    // DON'T convert numbered lists - keep them as numbered lists
     
     // Handle code blocks first (prevent processing inside code blocks)
     const codeBlocks: string[] = [];
@@ -180,13 +180,14 @@ export const MarkdownStripper = () => {
   };
 
   const handleToggleBold = () => {
-    setPreserveBold(!preserveBold);
+    const newPreserveBold = !preserveBold;
+    setPreserveBold(newPreserveBold);
     if (input.trim()) {
       // Re-process with new setting if there's input
-      const processed = stripMarkdown(input, !preserveBold);
+      const processed = stripMarkdown(input, newPreserveBold);
       setOutput(processed);
       toast({
-        title: `Bold text ${!preserveBold ? 'preserved' : 'removed'}`,
+        title: `Bold text ${newPreserveBold ? 'preserved' : 'removed'}`,
         description: "Text has been re-processed with new settings.",
       });
     }
