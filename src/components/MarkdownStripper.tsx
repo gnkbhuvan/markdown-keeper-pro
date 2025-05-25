@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,8 +17,8 @@ export const MarkdownStripper = () => {
 
     // Preprocessing rules
     // 1. Ignore lines with pricing patterns ($ followed by numbers and "million")
-    const pricingPattern = /^.*\$\d+.*million.*tokens.*$/gm;
-    result = result.replace(pricingPattern, '');
+    // const pricingPattern = /^.*\$\d+.*million.*tokens.*$/gm;
+    // result = result.replace(pricingPattern, '');
 
     // 1. Handle backslashes used incorrectly - remove standalone backslashes
     result = result.replace(/\\\s+/g, ' ');
@@ -157,17 +156,8 @@ export const MarkdownStripper = () => {
                 Clear
               </Button>
             </div>
-            <Textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Paste your markdown text here..."
-              className="min-h-[400px] font-mono text-sm border-coral-200 focus:border-coral-400 focus:ring-coral-400"
-            />
-            <Button
-              onClick={handleProcess}
-              className="w-full mt-4 bg-coral-500 hover:bg-coral-600 text-white"
-              disabled={!input.trim()}
-            >
+            <Textarea value={input} onChange={(e) => setInput(e.target.value)} placeholder="Paste your markdown text here..." className="min-h-[400px] font-mono text-sm border-coral-200 focus:border-coral-400 focus:ring-coral-400" />
+            <Button onClick={handleProcess} className="w-full mt-4 bg-coral-500 hover:bg-coral-600 text-white" disabled={!input.trim()}>
               <RefreshCw className="w-4 h-4 mr-2" />
               Process Text
             </Button>
@@ -214,6 +204,5 @@ export const MarkdownStripper = () => {
           </Card>
         </div>
       </div>
-    </section>
-  );
+    </section>);
 };

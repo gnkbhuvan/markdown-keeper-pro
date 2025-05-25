@@ -1,4 +1,3 @@
-
 export const DeveloperCredit = () => {
   return (
     <section className="px-6 py-8 lg:px-8">
@@ -10,7 +9,7 @@ export const DeveloperCredit = () => {
               href="https://linkedin.com/in/gnkbhuvan" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-coral-600 hover:text-coral-700 font-medium underline decoration-coral-300 hover:decoration-coral-500 transition-colors"
+              className="relative z-50 text-coral-600 hover:text-coral-700 font-medium underline decoration-coral-300 hover:decoration-coral-500 transition-colors"
             >
               Bhuvan Gnk
             </a>
