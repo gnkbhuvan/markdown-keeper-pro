@@ -1,52 +1,68 @@
 
-import { FileText, Zap, List, Bold } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, FileText, Zap } from "lucide-react";
 
 export const Hero = () => {
   return (
-    <section className="relative px-6 py-20 lg:px-8">
-      <div className="mx-auto max-w-7xl">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-8">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 bg-coral-100 text-coral-800 px-4 py-2 rounded-full text-sm font-medium">
-                <Zap className="w-4 h-4" />
-                INTELLIGENT PROCESSING
-              </div>
-              <h1 className="text-5xl lg:text-7xl font-bold text-coral-600 leading-tight">
-                MARKDOWN
-                <br />
-                <span className="text-coral-500">STRIPPER</span>
-              </h1>
-              <p className="text-xl text-gray-600 max-w-md">
-                Remove markdown formatting while preserving text structure, indentation, and bullet points perfectly - especially for ChatGPT content.
-              </p>
-            </div>
-            
-            <div className="flex items-center gap-4 text-sm text-gray-500">
-              <span>[ #PRESERVE ]</span>
-              <span>FORMATTING</span>
-            </div>
+    <div className="relative px-6 pt-14 lg:px-8">
+      <div className="mx-auto max-w-4xl py-32 sm:py-48 lg:py-56">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+            Clean Text from{" "}
+            <span className="text-coral-600">Markdown</span>
+          </h1>
+          <p className="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">
+            Transform your markdown-formatted text into clean, readable content while preserving the essential formatting and structure you need.
+          </p>
+          <div className="mt-10 flex items-center justify-center gap-x-6">
+            <Button className="bg-coral-500 hover:bg-coral-600 text-white">
+              Get started
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+            <Button variant="outline" className="border-coral-200 text-coral-600 hover:bg-coral-50">
+              Learn more
+            </Button>
           </div>
           
-          <div className="relative">
-            <div className="absolute top-4 right-4 w-16 h-16 bg-coral-400 rounded-full opacity-60" />
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-coral-200">
-              <div className="flex items-center gap-3 mb-6">
-                <FileText className="w-6 h-6 text-coral-500" />
-                <span className="font-semibold text-gray-700">Smart Processing</span>
-              </div>
-              <div className="space-y-3 text-sm">
-                <div className="text-gray-600">✓ Handles ** bold syntax (toggle on/off)</div>
-                <div className="text-gray-600">✓ Preserves indentation</div>
-                <div className="text-gray-600">✓ Maintains bullet points</div>
-                <div className="text-gray-600">✓ Keeps line breaks</div>
-                <div className="text-gray-600">✓ Works with copied ChatGPT content</div>
-                <div className="text-gray-600">✓ Perfect for Gmail & Google Chat</div>
-              </div>
+          {/* Developer Credit */}
+          <div className="mt-16 text-sm text-gray-500">
+            Developed by{" "}
+            <a 
+              href="https://linkedin.com/in/gnkbhuvan" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-coral-600 hover:text-coral-700 font-medium underline transition-colors"
+            >
+              Bhuvan Gnk
+            </a>
+          </div>
+
+          {/* Feature highlights */}
+          <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-3">
+            <div className="flex flex-col items-center p-6 bg-white/60 backdrop-blur-sm rounded-lg border border-coral-100">
+              <FileText className="h-8 w-8 text-coral-500 mb-3" />
+              <h3 className="font-semibold text-gray-900">Smart Processing</h3>
+              <p className="text-sm text-gray-600 text-center mt-2">
+                Intelligently removes markdown syntax while preserving your content structure
+              </p>
+            </div>
+            <div className="flex flex-col items-center p-6 bg-white/60 backdrop-blur-sm rounded-lg border border-coral-100">
+              <Zap className="h-8 w-8 text-coral-500 mb-3" />
+              <h3 className="font-semibold text-gray-900">Instant Results</h3>
+              <p className="text-sm text-gray-600 text-center mt-2">
+                Process your text in real-time with immediate preview and copy functionality
+              </p>
+            </div>
+            <div className="flex flex-col items-center p-6 bg-white/60 backdrop-blur-sm rounded-lg border border-coral-100">
+              <FileText className="h-8 w-8 text-coral-500 mb-3" />
+              <h3 className="font-semibold text-gray-900">Format Friendly</h3>
+              <p className="text-sm text-gray-600 text-center mt-2">
+                Perfect for emails, documents, and any platform that needs clean text
+              </p>
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
