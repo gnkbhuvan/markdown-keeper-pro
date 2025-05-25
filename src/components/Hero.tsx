@@ -1,5 +1,5 @@
 
-import { FileText, Zap, List, Bold } from "lucide-react";
+import { FileText, Zap, List } from "lucide-react";
 
 export const Hero = () => {
   return (
@@ -36,7 +36,7 @@ export const Hero = () => {
                 <span className="font-semibold text-gray-700">Smart Processing</span>
               </div>
               <div className="space-y-3 text-sm">
-                <div className="text-gray-600">✓ Handles ** bold syntax (toggle on/off)</div>
+                <div className="text-gray-600">✓ Removes markdown formatting</div>
                 <div className="text-gray-600">✓ Preserves indentation</div>
                 <div className="text-gray-600">✓ Maintains bullet points</div>
                 <div className="text-gray-600">✓ Keeps line breaks</div>

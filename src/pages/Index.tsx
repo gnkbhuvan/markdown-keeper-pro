@@ -2,6 +2,7 @@
 import { MarkdownStripper } from "@/components/MarkdownStripper";
 import { Hero } from "@/components/Hero";
 import { Features } from "@/components/Features";
+import { DeveloperCredit } from "@/components/DeveloperCredit";
 
 const Index = () => {
   return (
@@ -19,6 +20,7 @@ const Index = () => {
         </div>
         
         <Hero />
+        <DeveloperCredit />
         <MarkdownStripper />
         <Features />
       </div>

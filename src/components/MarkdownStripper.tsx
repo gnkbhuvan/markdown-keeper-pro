@@ -1,18 +1,17 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Copy, Download, RefreshCw, Trash2, Bold } from "lucide-react";
+import { Copy, Download, RefreshCw, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Switch } from "@/components/ui/switch";
 
 export const MarkdownStripper = () => {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
-  const [preserveBold, setPreserveBold] = useState(false);
   const { toast } = useToast();
 
-  const stripMarkdown = (text: string, keepBold: boolean): string => {
+  const stripMarkdown = (text: string): string => {
     if (!text) return "";
 
     let result = text;
@@ -22,18 +21,20 @@ export const MarkdownStripper = () => {
     const pricingPattern = /^.*\$\d+.*million.*tokens.*$/gm;
     result = result.replace(pricingPattern, '');
 
+    // 1. Handle backslashes used incorrectly - remove standalone backslashes
+    result = result.replace(/\\\s+/g, ' ');
+
     // 2. Convert numbered bullet points with bold formatting to plain text
     // Pattern: "1. **Text** rest of line" -> "1. Text rest of line"
     result = result.replace(/^(\s*\d+\.\s*)\*\*([^*]+)\*\*(.*)$/gm, '$1$2$3');
     result = result.replace(/^(\s*\d+\.\s*)__([^_]+)__(.*)$/gm, '$1$2$3');
 
-    // 3. Replace em dash (—) with comma
-    result = result.replace(/—/g, ',');
+    // 3. Replace em dash (—) with comma and space
+    result = result.replace(/—/g, ', ');
 
     // Special handling for ChatGPT-style bullet points and indentation
     // Preserve both markdown bullet points and Unicode bullets that might exist
     result = result.replace(/^(\s*)[-*+•](\s+)/gm, '$1•$2'); // Convert all bullets to bullet character
-    result = result.replace(/^(\s*)\d+\.(\s+)/gm, '$1•$2'); // Convert numbered lists to bullet character
     
     // Handle code blocks first (prevent processing inside code blocks)
     const codeBlocks: string[] = [];
@@ -43,60 +44,9 @@ export const MarkdownStripper = () => {
       return id;
     });
 
-    // Handle bold syntax based on user preference
-    if (!keepBold) {
-      // Remove bold formatting completely if not preserving
-      result = result.replace(/\*\*([^*]+)\*\*/g, '$1');
-      result = result.replace(/__([^_]+)__/g, '$1');
-    } else {
-      // For better compatibility with text applications, use Unicode bold characters when possible
-      // or keep the original markdown syntax for manual formatting
-      result = result.replace(/\*\*([^*]+)\*\*/g, (match, content) => {
-        // Try to convert to Unicode bold characters for basic ASCII
-        const boldContent = content.split('').map((char: string) => {
-          const code = char.charCodeAt(0);
-          // Convert A-Z to bold
-          if (code >= 65 && code <= 90) {
-            return String.fromCharCode(code - 65 + 0x1D400 + 26);
-          }
-          // Convert a-z to bold
-          if (code >= 97 && code <= 122) {
-            return String.fromCharCode(code - 97 + 0x1D41A);
-          }
-          // Convert 0-9 to bold
-          if (code >= 48 && code <= 57) {
-            return String.fromCharCode(code - 48 + 0x1D7CE);
-          }
-          return char;
-        }).join('');
-        
-        // If Unicode conversion resulted in different characters, use it; otherwise keep original
-        return boldContent !== content ? boldContent : `**${content}**`;
-      });
-      
-      result = result.replace(/__([^_]+)__/g, (match, content) => {
-        // Try to convert to Unicode bold characters for basic ASCII
-        const boldContent = content.split('').map((char: string) => {
-          const code = char.charCodeAt(0);
-          // Convert A-Z to bold
-          if (code >= 65 && code <= 90) {
-            return String.fromCharCode(code - 65 + 0x1D400 + 26);
-          }
-          // Convert a-z to bold
-          if (code >= 97 && code <= 122) {
-            return String.fromCharCode(code - 97 + 0x1D41A);
-          }
-          // Convert 0-9 to bold
-          if (code >= 48 && code <= 57) {
-            return String.fromCharCode(code - 48 + 0x1D7CE);
-          }
-          return char;
-        }).join('');
-        
-        // If Unicode conversion resulted in different characters, use it; otherwise keep original
-        return boldContent !== content ? boldContent : `__${content}__`;
-      });
-    }
+    // Handle bold syntax - always remove bold formatting
+    result = result.replace(/\*\*([^*]+)\*\*/g, '$1');
+    result = result.replace(/__([^_]+)__/g, '$1');
     
     // Handle single * italic syntax (but not bullet points)
     result = result.replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g, '$1');
@@ -140,7 +90,7 @@ export const MarkdownStripper = () => {
   };
 
   const handleProcess = () => {
-    const processed = stripMarkdown(input, preserveBold);
+    const processed = stripMarkdown(input);
     setOutput(processed);
     toast({
       title: "Processed successfully",
@@ -179,19 +129,6 @@ export const MarkdownStripper = () => {
     });
   };
 
-  const handleToggleBold = () => {
-    setPreserveBold(!preserveBold);
-    if (input.trim()) {
-      // Re-process with new setting if there's input
-      const processed = stripMarkdown(input, !preserveBold);
-      setOutput(processed);
-      toast({
-        title: `Bold text ${!preserveBold ? 'preserved' : 'removed'}`,
-        description: "Text has been re-processed with new settings.",
-      });
-    }
-  };
-
   return (
     <section className="px-6 py-16 lg:px-8">
       <div className="mx-auto max-w-7xl">
@@ -202,21 +139,6 @@ export const MarkdownStripper = () => {
           <p className="text-gray-600 max-w-2xl mx-auto">
             Paste your markdown text below and our intelligent processor will remove all markdown syntax while preserving your formatting structure.
           </p>
-        </div>
-
-        <div className="flex items-center justify-center mb-6">
-          <div className="flex items-center space-x-2">
-            <Switch 
-              id="preserve-bold" 
-              checked={preserveBold} 
-              onCheckedChange={handleToggleBold}
-              className="data-[state=checked]:bg-coral-500"
-            />
-            <label htmlFor="preserve-bold" className="text-sm font-medium text-gray-700 flex items-center">
-              <Bold className="h-4 w-4 mr-1" />
-              Preserve Bold Text
-            </label>
-          </div>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
